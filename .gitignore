@@ -1,0 +1,16 @@
+# application.yml
+src/main/resources/application.yml
+
+# IDE 설정파일 무시
+.idea/
+*.iml
+
+# 빌드 결과물 무시
+/build/
+/out/
+
+# OS 생성 파일 무시
+.DS_Store
+
+# 로그 파일 무시
+*.log

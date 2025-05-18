@@ -41,6 +41,7 @@ public class MemoService {
                 .title(request.getTitle())
                 .content(request.getContent())
                 .folder(folder)
+                .imageUrl(request.getImageUrl())
                 .isMath(false)
                 .viewCount(0)
                 .deleted(false)

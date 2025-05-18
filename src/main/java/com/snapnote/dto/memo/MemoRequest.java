@@ -15,4 +15,6 @@ public class MemoRequest {
     private String content;
 
     private Long folderId; // 선택적으로 폴더 지정
+
+    private String imageUrl; //  이미지 URL 추가
 }

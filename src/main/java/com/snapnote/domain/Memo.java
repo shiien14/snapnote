@@ -22,6 +22,9 @@ public class Memo {
     private Boolean deleted;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    @Column(name = "image_url")
+    private String imageUrl;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")

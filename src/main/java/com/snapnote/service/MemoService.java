@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -21,6 +22,7 @@ public class MemoService {
     private final MemoRepository memoRepository;
     private final UserRepository userRepository;
     private final FolderRepository folderRepository;
+    private final OcrService ocrService;
 
     public MemoResponse createMemo(MemoRequest request) {
         String email = (String) SecurityContextHolder.getContext()
@@ -36,10 +38,20 @@ public class MemoService {
                     .orElseThrow(() -> new IllegalArgumentException("폴더가 존재하지 않습니다."));
         }
 
+        String content = request.getContent();
+
+        // OCR 연동: content가 비어있고 imageUrl이 있을경우
+        if ((content == null || content.isBlank()) && request.getImageUrl() != null) {
+            String imagePath = Paths.get("uploads", request.getImageUrl().replace("/uploads/", ""))
+                    .toAbsolutePath()
+                    .toString(); // 예: /Users/시은/dev/snapnote/uploads/xxx.png
+            content = ocrService.extractText(imagePath);
+        }
+
         Memo memo = Memo.builder()
                 .user(user)
                 .title(request.getTitle())
-                .content(request.getContent())
+                .content(content != null ? content : "")
                 .folder(folder)
                 .imageUrl(request.getImageUrl())
                 .isMath(false)

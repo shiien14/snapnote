@@ -46,4 +46,11 @@ public class MemoController {
         return ResponseEntity.ok("메모 삭제 완료");
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<MemoSummaryResponse>> searchMemos(
+            @RequestParam String keyword,
+            @RequestParam(required = false) Boolean isMath) {
+        return ResponseEntity.ok(memoService.searchMemos(keyword, isMath));
+    }
+
 }

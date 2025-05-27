@@ -44,9 +44,12 @@ public class MemoService {
         if ((content == null || content.isBlank()) && request.getImageUrl() != null) {
             String imagePath = Paths.get("uploads", request.getImageUrl().replace("/uploads/", ""))
                     .toAbsolutePath()
-                    .toString(); // 예: /Users/시은/dev/snapnote/uploads/xxx.png
+                    .toString();
             content = ocrService.extractText(imagePath);
         }
+
+        //수식여부 판단
+        boolean isMath = isMathExpression(content);
 
         Memo memo = Memo.builder()
                 .user(user)
@@ -54,7 +57,7 @@ public class MemoService {
                 .content(content != null ? content : "")
                 .folder(folder)
                 .imageUrl(request.getImageUrl())
-                .isMath(false)
+                .isMath(isMath)
                 .viewCount(0)
                 .deleted(false)
                 .createdAt(LocalDateTime.now())
@@ -69,6 +72,22 @@ public class MemoService {
         String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
         List<Memo> memos = memoRepository.findAllByUserEmailAndDeletedFalseOrderByCreatedAtDesc(email);
+
+        return memos.stream()
+                .map(memo -> new MemoSummaryResponse(
+                        memo.getId(),
+                        memo.getTitle(),
+                        shorten(memo.getContent()),
+                        memo.getCreatedAt(),
+                        memo.getViewCount()
+                ))
+                .toList();
+    }
+
+    public List<MemoSummaryResponse> searchMemos(String keyword, Boolean isMath) {
+        String email = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        List<Memo> memos = memoRepository.searchMemos(email, keyword, isMath);
 
         return memos.stream()
                 .map(memo -> new MemoSummaryResponse(
@@ -134,5 +153,11 @@ public class MemoService {
 
         memoRepository.save(memo);
     }
+
+    private boolean isMathExpression(String text) {
+        String mathPattern = ".*(\\d+\\s*[-+*/=^]+\\s*\\d+|sin|cos|tan|log|\\^|√|∫|∑|π).*";
+        return text != null && text.toLowerCase().matches(mathPattern);
+    }
+
 
 }

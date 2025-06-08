@@ -1,6 +1,7 @@
 package com.snapnote.repository;
 
 import com.snapnote.domain.Memo;
+import com.snapnote.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,6 +15,10 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     List<Memo> findAllByUserEmailAndDeletedFalseOrderByCreatedAtDesc(String email);
     Optional<Memo> findByIdAndUserEmailAndDeletedFalse(Long id, String email);
     List<Memo> findTop5ByDeletedFalseOrderByViewCountDesc();
+    long countByUserAndDeletedFalse(User user);
+    long countByUserAndIsMathTrueAndDeletedFalse(User user);
+    List<Memo> findTop5ByUserAndDeletedFalseOrderByCreatedAtDesc(User user);
+
 
     @Query("SELECT m FROM Memo m WHERE m.user.email = :email AND m.deleted = false " +
             "AND (LOWER(m.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +

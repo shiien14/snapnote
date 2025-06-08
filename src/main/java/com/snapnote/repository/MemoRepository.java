@@ -13,6 +13,7 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     List<Memo> findByUserEmail(String email);
     List<Memo> findAllByUserEmailAndDeletedFalseOrderByCreatedAtDesc(String email);
     Optional<Memo> findByIdAndUserEmailAndDeletedFalse(Long id, String email);
+    List<Memo> findTop5ByDeletedFalseOrderByViewCountDesc();
 
     @Query("SELECT m FROM Memo m WHERE m.user.email = :email AND m.deleted = false " +
             "AND (LOWER(m.title) LIKE LOWER(CONCAT('%', :keyword, '%')) " +

@@ -1,6 +1,7 @@
 package com.snapnote.controller;
 
 import com.snapnote.dto.user.MypageResponseDto;
+import com.snapnote.dto.user.UpdateUserRequestDto;
 import com.snapnote.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +17,16 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<MypageResponseDto> getMypage(@AuthenticationPrincipal UserDetails userDetails) {
-        String email = userDetails.getUsername(); // JWT 인증 필터에서 설정된 사용자 이메일
+    public ResponseEntity<MypageResponseDto> getMypage(@AuthenticationPrincipal String email) {
         MypageResponseDto response = userService.getMypage(email);
         return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/me")
+    public ResponseEntity<MypageResponseDto> updateUserName(
+            @AuthenticationPrincipal String email,
+            @RequestBody UpdateUserRequestDto request
+    ) {
+        return ResponseEntity.ok(userService.updateUserName(email, request));
     }
 }

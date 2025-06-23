@@ -19,6 +19,7 @@ public class MypageResponseDto {
     private long mathMemoCount;
     private List<RecentMemo> recentMemos;
 
+
     @Getter
     @Builder
     @NoArgsConstructor
